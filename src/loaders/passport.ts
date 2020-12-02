@@ -1,13 +1,13 @@
 import github from 'passport-github2';
 
 import config from '../config'
-import { User } from '../interfaces/User'
+import { IUser } from '../interfaces/IUser'
 
 export default(passport) => {
   const GitHubStrategy = github.Strategy;
 
   passport.serializeUser((user, done) => {
-    const happyUser: User = {
+    const happyUser: IUser = {
       _id: user.id,
       displayName: user.displayName,
       username: user.username,
