@@ -1,12 +1,23 @@
 import github from 'passport-github2';
 
 import config from '../config'
+import { User } from '../interfaces/User'
 
 export default(passport) => {
   const GitHubStrategy = github.Strategy;
 
   passport.serializeUser((user, done) => {
-    done(null, user);
+    const happyUser: User = {
+      _id: user.id,
+      displayName: user.displayName,
+      username: user.username,
+      photo: user.photos[0].value,
+      profileUrl: user._json.html_url,
+      accessToken: user.accessToken,
+      refreshToken: user.refreshToken
+    }
+
+    done(null, happyUser);
   });
 
   passport.deserializeUser((obj, done) => {
@@ -21,6 +32,8 @@ export default(passport) => {
         callbackURL: "http://localhost:3000/auth/github/callback",
       }, (accessToken, refreshToken, profile, done) => {
         process.nextTick(() => {
+          profile.accessToken = accessToken
+          profile.refreshToken = refreshToken
           return done(null, profile);
         });
       }
